@@ -8,7 +8,10 @@
       "PowerShell($env:PATH = \"C:\\\\Program Files\\\\nodejs;\" + $env:PATH; Set-Location \"C:\\\\Users\\\\Felipe\\\\Desktop\\\\Donemos\"; npm install 2>&1 | Select-Object -Last 10)",
       "WebFetch(domain:uboswvsijbddwygypkic.supabase.co)",
       "PowerShell($env:PATH = \"C:\\\\Program Files\\\\nodejs;\" + $env:PATH; Set-Location \"C:\\\\Users\\\\Felipe\\\\Desktop\\\\Donemos\"; Start-Process -NoNewWindow -FilePath \"C:\\\\Program Files\\\\nodejs\\\\npm.cmd\" -ArgumentList \"run\",\"dev\" -RedirectStandardOutput \"$env:TEMP\\\\vite-out.txt\" -RedirectStandardError \"$env:TEMP\\\\vite-err.txt\"; Start-Sleep -Seconds 5; Get-Content \"$env:TEMP\\\\vite-out.txt\",\"$env:TEMP\\\\vite-err.txt\" -ErrorAction SilentlyContinue)",
-      "PowerShell(Get-ChildItem C:\\\\Users\\\\Felipe\\\\Desktop\\\\Donemos -Name | Where-Object { $_ -notmatch \"^node_modules\" })"
+      "PowerShell(Get-ChildItem C:\\\\Users\\\\Felipe\\\\Desktop\\\\Donemos -Name | Where-Object { $_ -notmatch \"^node_modules\" })",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
