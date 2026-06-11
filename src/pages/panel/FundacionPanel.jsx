@@ -5,7 +5,9 @@ import { supabase } from '../../lib/supabase'
 const TABS = [
   { id: 'perfil',      label: 'Mi perfil',           icon: '👤' },
   { id: 'solicitudes', label: 'Mis solicitudes',      icon: '📋' },
-  { id: 'donaciones',  label: 'Donaciones recibidas', icon: '💚' },
+  { id: 'pagos',       label: 'Métodos de pago',      icon: '💳' },
+  { id: 'pendientes',  label: 'Donaciones pendientes',icon: '🔔' },
+  { id: 'donaciones',  label: 'Historial',            icon: '💚' },
 ]
 
 const CATEGORIAS = [
@@ -48,9 +50,11 @@ export default function FundacionPanel() {
           ))}
         </div>
 
-        {tab === 'perfil'      && <TabPerfil      usuario={usuario} onSave={refreshUsuario} />}
-        {tab === 'solicitudes' && <TabSolicitudes  usuario={usuario} />}
-        {tab === 'donaciones'  && <TabDonaciones   usuario={usuario} />}
+        {tab === 'perfil'      && <TabPerfil       usuario={usuario} onSave={refreshUsuario} />}
+        {tab === 'solicitudes' && <TabSolicitudes   usuario={usuario} />}
+        {tab === 'pagos'       && <TabMetodosPago   usuario={usuario} />}
+        {tab === 'pendientes'  && <TabPendientes    usuario={usuario} />}
+        {tab === 'donaciones'  && <TabDonaciones    usuario={usuario} />}
       </div>
     </div>
   )
@@ -527,6 +531,255 @@ function NuevaSolicitudForm({ usuario, onCreated }) {
         {saving ? 'Publicando…' : 'Publicar solicitud'}
       </button>
     </form>
+  )
+}
+
+// ─── Tab Métodos de pago ──────────────────────────────────────────────────────
+function TabMetodosPago({ usuario }) {
+  const [saving, setSaving] = useState(false)
+  const [msg,    setMsg]    = useState('')
+  const [form, setForm] = useState({
+    wompi_link: '', nequi_numero: '', daviplata_numero: '',
+    banco_nombre: '', banco_tipo_cuenta: '', banco_numero_cuenta: '',
+    banco_titular: '', banco_nit: '',
+  })
+
+  useEffect(() => {
+    if (!usuario?.fundacion_id) return
+    supabase.from('fundaciones').select(
+      'wompi_link,nequi_numero,daviplata_numero,banco_nombre,banco_tipo_cuenta,banco_numero_cuenta,banco_titular,banco_nit'
+    ).eq('id', usuario.fundacion_id).maybeSingle()
+      .then(({ data }) => {
+        if (!data) return
+        setForm({
+          wompi_link:           data.wompi_link           ?? '',
+          nequi_numero:         data.nequi_numero         ?? '',
+          daviplata_numero:     data.daviplata_numero     ?? '',
+          banco_nombre:         data.banco_nombre         ?? '',
+          banco_tipo_cuenta:    data.banco_tipo_cuenta    ?? '',
+          banco_numero_cuenta:  data.banco_numero_cuenta  ?? '',
+          banco_titular:        data.banco_titular        ?? '',
+          banco_nit:            data.banco_nit            ?? '',
+        })
+      })
+  }, [usuario])
+
+  async function handleSave(e) {
+    e.preventDefault()
+    if (!usuario?.fundacion_id) return
+    setSaving(true)
+    const { error } = await supabase.from('fundaciones').update({
+      wompi_link:           form.wompi_link           || null,
+      nequi_numero:         form.nequi_numero         || null,
+      daviplata_numero:     form.daviplata_numero     || null,
+      banco_nombre:         form.banco_nombre         || null,
+      banco_tipo_cuenta:    form.banco_tipo_cuenta    || null,
+      banco_numero_cuenta:  form.banco_numero_cuenta  || null,
+      banco_titular:        form.banco_titular        || null,
+      banco_nit:            form.banco_nit            || null,
+    }).eq('id', usuario.fundacion_id)
+    setSaving(false)
+    flash(error ? 'Error: ' + error.message : '¡Métodos de pago actualizados!')
+  }
+
+  function flash(text) { setMsg(text); setTimeout(() => setMsg(''), 4000) }
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  return (
+    <div className="card p-8">
+      <h2 className="text-lg font-semibold text-gray-900 mb-2">Métodos de pago</h2>
+      <p className="text-sm text-gray-400 mb-6">
+        Configura cómo quieres recibir donaciones. Solo los métodos configurados aparecerán en tu página pública.
+      </p>
+      <form onSubmit={handleSave} className="space-y-6">
+        <Section title="💳 Wompi">
+          <PanelField label="Link de pago Wompi" value={form.wompi_link} onChange={v => set('wompi_link', v)}
+            placeholder="https://checkout.wompi.io/l/..." required={false} />
+          <p className="text-xs text-gray-400">Obtén tu link en el panel de Wompi → Cobros → Crear link de pago</p>
+        </Section>
+        <Section title="📱 Nequi y Daviplata">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <PanelField label="Número Nequi"     value={form.nequi_numero}     onChange={v => set('nequi_numero', v)}     placeholder="+57 300 000 0000" required={false} />
+            <PanelField label="Número Daviplata" value={form.daviplata_numero} onChange={v => set('daviplata_numero', v)} placeholder="+57 300 000 0000" required={false} />
+          </div>
+        </Section>
+        <Section title="🏦 Transferencia bancaria">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <PanelField label="Banco"            value={form.banco_nombre}        onChange={v => set('banco_nombre', v)}        placeholder="Ej: Bancolombia" required={false} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Tipo de cuenta</label>
+              <select value={form.banco_tipo_cuenta} onChange={e => set('banco_tipo_cuenta', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+                <option value="">Seleccionar…</option>
+                <option value="Ahorros">Ahorros</option>
+                <option value="Corriente">Corriente</option>
+              </select>
+            </div>
+            <PanelField label="Número de cuenta" value={form.banco_numero_cuenta} onChange={v => set('banco_numero_cuenta', v)} placeholder="Ej: 123-456789-00" required={false} />
+            <PanelField label="Titular"           value={form.banco_titular}       onChange={v => set('banco_titular', v)}       placeholder="Nombre o razón social" required={false} />
+            <PanelField label="NIT / Cédula"      value={form.banco_nit}           onChange={v => set('banco_nit', v)}           placeholder="Ej: 900.123.456-1" required={false} />
+          </div>
+        </Section>
+
+        {msg && (
+          <div className={`text-sm px-4 py-3 rounded-xl ${msg.startsWith('Error') ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+            {msg}
+          </div>
+        )}
+        <button type="submit" disabled={saving} className="btn-primary py-2.5 px-8 flex items-center gap-2">
+          {saving && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+          {saving ? 'Guardando…' : 'Guardar métodos de pago'}
+        </button>
+      </form>
+    </div>
+  )
+}
+
+// ─── Tab Donaciones pendientes ────────────────────────────────────────────────
+function TabPendientes({ usuario }) {
+  const [donaciones, setDonaciones] = useState([])
+  const [loading,    setLoading]    = useState(true)
+  const [procesando, setProcesando] = useState(null)
+
+  const load = async () => {
+    if (!usuario?.fundacion_id) return
+    setLoading(true)
+    const { data } = await supabase
+      .from('donaciones')
+      .select('*, usuarios(nombre, email), solicitudes(titulo, tipo, meta, progreso)')
+      .eq('fundacion_id', usuario.fundacion_id)
+      .eq('estado', 'pendiente')
+      .order('created_at', { ascending: false })
+    setDonaciones(data ?? [])
+    setLoading(false)
+  }
+
+  useEffect(() => { load() }, [usuario])
+
+  async function confirmar(id, donacion) {
+    setProcesando(id)
+    await supabase.from('donaciones').update({ estado: 'completada' }).eq('id', id)
+
+    // Actualizar progreso de la solicitud si aplica
+    if (donacion.solicitud_id && donacion.tipo === 'money' && donacion.monto) {
+      const { data: sol } = await supabase.from('solicitudes').select('progreso').eq('id', donacion.solicitud_id).maybeSingle()
+      if (sol) {
+        await supabase.from('solicitudes').update({ progreso: (sol.progreso ?? 0) + donacion.monto }).eq('id', donacion.solicitud_id)
+      }
+    }
+
+    // Notificación al donante (si tiene usuario)
+    if (donacion.usuario_id) {
+      await supabase.from('notificaciones').insert({
+        usuario_id:   donacion.usuario_id,
+        fundacion_id: usuario.fundacion_id,
+        tipo:         'donacion_confirmada',
+        mensaje:      `¡Tu donación a ${usuario?.fundaciones?.nombre ?? 'la fundación'} fue confirmada!`,
+      })
+    }
+
+    setProcesando(null)
+    load()
+  }
+
+  async function rechazar(id) {
+    setProcesando(id)
+    await supabase.from('donaciones').update({ estado: 'rechazada' }).eq('id', id)
+    setProcesando(null)
+    load()
+  }
+
+  const METODO_META = {
+    wompi:        { icon: '💳', label: 'Wompi' },
+    nequi:        { icon: '📱', label: 'Nequi' },
+    daviplata:    { icon: '📱', label: 'Daviplata' },
+    transferencia:{ icon: '🏦', label: 'Transferencia' },
+    especie:      { icon: '📦', label: 'En especie' },
+    voluntariado: { icon: '🤝', label: 'Voluntariado' },
+  }
+
+  if (loading) return <Spinner />
+
+  if (donaciones.length === 0) return (
+    <div className="card p-12 text-center">
+      <p className="text-4xl mb-4">✅</p>
+      <p className="font-semibold text-gray-700 mb-1">Sin donaciones pendientes</p>
+      <p className="text-gray-400 text-sm">Cuando alguien done, aparecerá aquí para confirmar o rechazar</p>
+    </div>
+  )
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 px-4 py-3 rounded-xl border border-amber-200">
+        <span>⏳</span>
+        <span><strong>{donaciones.length}</strong> donación{donaciones.length !== 1 ? 'es' : ''} esperando confirmación</span>
+      </div>
+
+      {donaciones.map(d => {
+        const mm = METODO_META[d.metodo_pago] ?? METODO_META.transferencia
+        return (
+          <div key={d.id} className="card p-5">
+            <div className="flex items-start gap-4 mb-4">
+              <span className="text-3xl shrink-0">{mm.icon}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2 flex-wrap">
+                  <div>
+                    <p className="font-semibold text-gray-900">{d.usuarios?.nombre ?? 'Donante anónimo'}</p>
+                    {d.usuarios?.email && <p className="text-xs text-gray-400">{d.usuarios.email}</p>}
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(d.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-primary-600">
+                      {d.tipo === 'money' && d.monto ? `$${Number(d.monto).toLocaleString('es-CO')} COP` : mm.label}
+                    </p>
+                    <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Pendiente</span>
+                  </div>
+                </div>
+                {d.solicitudes?.titulo && (
+                  <p className="text-xs text-gray-500 mt-1.5 bg-gray-50 px-2 py-1 rounded-lg inline-block">
+                    📋 {d.solicitudes.titulo}
+                  </p>
+                )}
+                {d.descripcion && (
+                  <p className="text-sm text-gray-600 mt-2 leading-relaxed">{d.descripcion}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Comprobante */}
+            {d.comprobante_url && (
+              <div className="mb-4">
+                <a href={d.comprobante_url} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-600 hover:underline bg-primary-50 px-3 py-1.5 rounded-lg">
+                  📎 Ver comprobante adjunto ↗
+                </a>
+              </div>
+            )}
+
+            {/* Acciones */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => confirmar(d.id, d)}
+                disabled={procesando === d.id}
+                className="flex-1 btn-primary py-2 text-sm flex items-center justify-center gap-2">
+                {procesando === d.id
+                  ? <><span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Procesando…</>
+                  : '✓ Confirmar recibida'
+                }
+              </button>
+              <button
+                onClick={() => rechazar(d.id)}
+                disabled={procesando === d.id}
+                className="flex-1 py-2 text-sm font-medium rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50">
+                ✕ Rechazar
+              </button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }
 

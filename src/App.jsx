@@ -19,6 +19,7 @@ import MiImpacto          from './pages/donante/MiImpacto'
 import AdminPanel         from './pages/admin/AdminPanel'
 
 // Páginas públicas
+import Donar              from './pages/Donar'
 import Fundaciones        from './pages/Fundaciones'
 import FundacionPerfil    from './pages/FundacionPerfil'
 import ComoFunciona       from './pages/ComoFunciona'
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/recuperar" element={<ForgotPassword />} />
 
             {/* Páginas públicas — cada una incluye su propio Navbar + Footer */}
+            <Route path="/donar/:fundacionId"     element={<Donar />} />
             <Route path="/fundaciones"           element={<Fundaciones />} />
             <Route path="/fundacion/:id"         element={<FundacionPerfil />} />
             <Route path="/como-funciona"         element={<ComoFunciona />} />

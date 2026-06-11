@@ -250,13 +250,9 @@ export default function FundacionPerfil() {
                   <div className="text-center py-8 text-gray-400">
                     <p className="text-3xl mb-2">📋</p>
                     <p className="text-sm">Esta fundación no tiene solicitudes activas por ahora.</p>
-                    {fundacion.web && (
-                      <a href={fundacion.web.startsWith('http') ? fundacion.web : `https://${fundacion.web}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="inline-block mt-4 btn-primary text-sm py-2 px-5">
-                        Contactar directamente
-                      </a>
-                    )}
+                    <Link to={`/donar/${fundacion.id}`} className="inline-block mt-4 btn-primary text-sm py-2 px-5">
+                      Donar a esta fundación
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -294,13 +290,9 @@ export default function FundacionPerfil() {
                               </div>
                             </div>
                           )}
-                          {fundacion.web && (
-                            <a href={fundacion.web.startsWith('http') ? fundacion.web : `https://${fundacion.web}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="inline-block btn-primary text-xs py-2 px-4">
-                              Quiero ayudar
-                            </a>
-                          )}
+                          <Link to={`/donar/${fundacion.id}`} className="inline-block btn-primary text-xs py-2 px-4">
+                            Quiero ayudar
+                          </Link>
                         </div>
                       )
                     })}
