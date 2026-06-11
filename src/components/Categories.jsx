@@ -33,7 +33,7 @@ export default function Categories({ onCategoryChange }) {
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <section id="categorias" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900">Explorar por categoría</h2>
         <a href="#" className="text-primary-500 text-sm font-medium hover:underline">Ver todas →</a>

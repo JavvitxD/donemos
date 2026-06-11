@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { categoriaMeta } from '../data/fundaciones'
 import { useSolicitudesUrgentes } from '../hooks/useFundaciones'
 
@@ -48,9 +49,9 @@ export default function UrgentRequests() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Solicitudes que necesitan tu ayuda</h2>
           </div>
-          <a href="#" className="hidden md:block text-primary-500 text-sm font-medium hover:underline">
+          <Link to="/fundaciones" className="hidden md:block text-primary-500 text-sm font-medium hover:underline">
             Ver todas →
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -124,14 +125,12 @@ export default function UrgentRequests() {
                             </strong>
                           </span>
                         </div>
-                        <a
-                          href={req.webUrl ?? '#'}
-                          target={req.webUrl ? '_blank' : undefined}
-                          rel="noopener noreferrer"
+                        <Link
+                          to={`/fundacion/${req.fundacionId}`}
                           className="w-full btn-primary text-sm py-2.5 text-center block"
                         >
                           Quiero ayudar
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -141,9 +140,9 @@ export default function UrgentRequests() {
         </div>
 
         <div className="text-center mt-8 md:hidden">
-          <a href="#" className="text-primary-500 text-sm font-medium hover:underline">
+          <Link to="/fundaciones" className="text-primary-500 text-sm font-medium hover:underline">
             Ver todas las solicitudes →
-          </a>
+          </Link>
         </div>
       </div>
     </section>

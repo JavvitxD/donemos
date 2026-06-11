@@ -29,6 +29,8 @@ const stats = [
   },
 ]
 
+import { Link } from 'react-router-dom'
+
 export default function Stats() {
   return (
     <section id="como" className="bg-white py-16">
@@ -65,12 +67,12 @@ export default function Stats() {
             Únete a Donemos y conecta con miles de donantes comprometidos con el cambio social en Colombia.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button className="bg-white text-primary-600 font-semibold px-7 py-3 rounded-xl hover:bg-gray-50 transition-colors">
+            <Link to="/registro" className="bg-white text-primary-600 font-semibold px-7 py-3 rounded-xl hover:bg-gray-50 transition-colors text-center">
               Registrar mi fundación
-            </button>
-            <button className="border-2 border-white/40 text-white font-semibold px-7 py-3 rounded-xl hover:bg-white/10 transition-colors">
+            </Link>
+            <Link to="/como-funciona" className="border-2 border-white/40 text-white font-semibold px-7 py-3 rounded-xl hover:bg-white/10 transition-colors text-center">
               Conocer más
-            </button>
+            </Link>
           </div>
         </div>
       </div>

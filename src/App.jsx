@@ -11,12 +11,22 @@ import FeaturedFoundations from './components/FeaturedFoundations'
 import Stats               from './components/Stats'
 import Footer              from './components/Footer'
 
-import Login          from './pages/Login'
-import Register       from './pages/Register'
-import ForgotPassword from './pages/ForgotPassword'
-import FundacionPanel from './pages/panel/FundacionPanel'
-import MiImpacto      from './pages/donante/MiImpacto'
-import AdminPanel     from './pages/admin/AdminPanel'
+import Login              from './pages/Login'
+import Register           from './pages/Register'
+import ForgotPassword     from './pages/ForgotPassword'
+import FundacionPanel     from './pages/panel/FundacionPanel'
+import MiImpacto          from './pages/donante/MiImpacto'
+import AdminPanel         from './pages/admin/AdminPanel'
+
+// Páginas públicas
+import Fundaciones        from './pages/Fundaciones'
+import FundacionPerfil    from './pages/FundacionPerfil'
+import ComoFunciona       from './pages/ComoFunciona'
+import Buscar             from './pages/Buscar'
+import Seguridad          from './pages/Seguridad'
+import Contacto           from './pages/Contacto'
+import PoliticaPrivacidad from './pages/PoliticaPrivacidad'
+import TerminosDeUso      from './pages/TerminosDeUso'
 
 function Home() {
   const [activeCategory, setActiveCategory] = useState('all')
@@ -37,12 +47,22 @@ export default function App() {
       <AuthProvider>
         <div className="min-h-screen bg-gray-50">
           <Routes>
-            {/* Rutas públicas sin navbar de home */}
-            <Route path="/login"    element={<Login />} />
-            <Route path="/registro" element={<Register />} />
+            {/* Auth — sin Navbar propio */}
+            <Route path="/login"     element={<Login />} />
+            <Route path="/registro"  element={<Register />} />
             <Route path="/recuperar" element={<ForgotPassword />} />
 
-            {/* Rutas protegidas — paneles */}
+            {/* Páginas públicas — cada una incluye su propio Navbar + Footer */}
+            <Route path="/fundaciones"           element={<Fundaciones />} />
+            <Route path="/fundacion/:id"         element={<FundacionPerfil />} />
+            <Route path="/como-funciona"         element={<ComoFunciona />} />
+            <Route path="/buscar"                element={<Buscar />} />
+            <Route path="/seguridad"             element={<Seguridad />} />
+            <Route path="/contacto"              element={<Contacto />} />
+            <Route path="/politica-de-privacidad" element={<PoliticaPrivacidad />} />
+            <Route path="/terminos-de-uso"       element={<TerminosDeUso />} />
+
+            {/* Rutas protegidas */}
             <Route path="/panel" element={
               <ProtectedRoute requiredRole="fundacion">
                 <Navbar />

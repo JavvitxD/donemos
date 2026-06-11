@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { categoriaMeta } from '../data/fundaciones'
 import { useFundaciones } from '../hooks/useFundaciones'
 
@@ -75,9 +76,9 @@ export default function FeaturedFoundations({ activeCategory = 'all' }) {
                   : 'Organizaciones verificadas con mayor impacto en Bogotá'}
             </p>
           </div>
-          <a href="#" className="hidden md:block text-primary-500 text-sm font-medium hover:underline">
+          <Link to="/fundaciones" className="hidden md:block text-primary-500 text-sm font-medium hover:underline">
             Ver todas →
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -139,14 +140,12 @@ export default function FeaturedFoundations({ activeCategory = 'all' }) {
                         </div>
                       </div>
 
-                      <a
-                        href={`https://${f.web}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <Link
+                        to={`/fundacion/${f.id}`}
                         className="w-full btn-outline text-xs py-2 px-3 text-center block"
                       >
-                        Ver perfil
-                      </a>
+                        Ver perfil →
+                      </Link>
                     </div>
                   )
                 })
