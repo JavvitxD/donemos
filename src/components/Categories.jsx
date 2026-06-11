@@ -25,6 +25,11 @@ export default function Categories({ onCategoryChange }) {
   const handleSelect = (id) => {
     setActive(id)
     if (onCategoryChange) onCategoryChange(id)
+    if (id !== 'all') {
+      setTimeout(() => {
+        document.getElementById('fundaciones')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 80)
+    }
   }
 
   return (

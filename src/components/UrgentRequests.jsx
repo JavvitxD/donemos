@@ -124,9 +124,14 @@ export default function UrgentRequests() {
                             </strong>
                           </span>
                         </div>
-                        <button className="w-full btn-primary text-sm py-2.5">
+                        <a
+                          href={req.webUrl ?? '#'}
+                          target={req.webUrl ? '_blank' : undefined}
+                          rel="noopener noreferrer"
+                          className="w-full btn-primary text-sm py-2.5 text-center block"
+                        >
                           Quiero ayudar
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>

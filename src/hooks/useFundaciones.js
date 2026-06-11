@@ -20,14 +20,17 @@ export function useFundaciones(categoria = 'all') {
 
       if (cancelled) return
 
-      if (sbError || !data || data.length === 0) {
-        // Supabase no disponible o sin tablas: usar datos locales
+      if (sbError || !data) {
+        // Supabase no disponible o error de red: usar datos locales
         const local = categoria === 'all'
           ? localData
           : localData.filter(f => f.categoria === categoria)
-        // Normalizar campos snake_case ↔ camelCase para compatibilidad
         setFundaciones(local.map(normalizeLocal))
         setFromSupabase(false)
+      } else if (data.length === 0) {
+        // Categoría válida pero sin fundaciones en BD: mostrar vacío (no fallback sin filtro)
+        setFundaciones([])
+        setFromSupabase(true)
       } else {
         setFundaciones(data.map(normalizeSupabase))
         setFromSupabase(true)
@@ -55,7 +58,7 @@ export function useSolicitudesUrgentes() {
       setLoading(true)
       const { data, error } = await supabase
         .from('solicitudes')
-        .select('*, fundaciones(nombre, verificada)')
+        .select('*, fundaciones(nombre, verificada, web)')
         .eq('activa', true)
         .order('urgencia', { ascending: false })
         .limit(4)
@@ -63,7 +66,10 @@ export function useSolicitudesUrgentes() {
       if (cancelled) return
 
       if (error || !data || data.length === 0) {
-        setSolicitudes(localSolicitudes)
+        setSolicitudes(localSolicitudes.map(s => {
+          const f = localData.find(f => f.id === s.fundacionId)
+          return { ...s, webUrl: f?.web ? `https://${f.web}` : null }
+        }))
         setFromSupabase(false)
       } else {
         setSolicitudes(data.map(s => ({
@@ -80,7 +86,8 @@ export function useSolicitudesUrgentes() {
           daysLeft:     s.fecha_limite
             ? Math.max(0, Math.ceil((new Date(s.fecha_limite) - new Date()) / 86400000))
             : 99,
-          image: s.imagen_url ?? defaultImage(s.tipo),
+          image:        s.imagen_url ?? defaultImage(s.tipo),
+          webUrl:       s.fundaciones?.web ? `https://${s.fundaciones.web}` : null,
         })))
         setFromSupabase(true)
       }

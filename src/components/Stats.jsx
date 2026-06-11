@@ -31,7 +31,7 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section className="bg-white py-16">
+    <section id="como" className="bg-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}

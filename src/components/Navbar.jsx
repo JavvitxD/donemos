@@ -46,9 +46,9 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/"   className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Explorar</Link>
-            <a    href="/#fundaciones" className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Fundaciones</a>
-            <a    href="/#como"        className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Cómo funciona</a>
+            <Link to="/"              className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Explorar</Link>
+            <Link to="/#fundaciones" className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Fundaciones</Link>
+            <Link to="/#como"        className="text-gray-600 hover:text-primary-500 font-medium transition-colors text-sm">Cómo funciona</Link>
           </div>
 
           {/* Auth area */}
@@ -144,9 +144,9 @@ export default function Navbar() {
       {/* Mobile dropdown */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-2">
-          <Link to="/"   className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Explorar</Link>
-          <a href="/#fundaciones" className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Fundaciones</a>
-          <a href="/#como"        className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Cómo funciona</a>
+          <Link to="/"             className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Explorar</Link>
+          <Link to="/#fundaciones" className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Fundaciones</Link>
+          <Link to="/#como"        className="block text-gray-700 font-medium py-2" onClick={() => setMenuOpen(false)}>Cómo funciona</Link>
 
           {session ? (
             <>

@@ -24,8 +24,8 @@ function Home() {
     <>
       <Hero />
       <Categories onCategoryChange={setActiveCategory} />
-      <UrgentRequests />
       <FeaturedFoundations activeCategory={activeCategory} />
+      <UrgentRequests />
       <Stats />
     </>
   )
